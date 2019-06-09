@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const middleware_1 = require("./middleware");
-const actionStudent_1 = require("../../Schema/actionStudent");
-const actionTendency_1 = require("../../Schema/actionTendency");
+const student_action_1 = require("../../schema/student_action");
+const tendency_action_1 = require("../../schema/tendency_action");
 class service {
     constructor(app, db) {
         this.app = app;
         this.db = db;
-        const Student_action = new actionStudent_1.StudentAction(this.db);
-        const Tendency_action = new actionTendency_1.TendencyAction(this.db);
+        const Student_action = new student_action_1.StudentAction(this.db);
+        const Tendency_action = new tendency_action_1.TendencyAction(this.db);
         const middleware = new middleware_1.Middleware(Student_action, Tendency_action);
         this.app.get('/student', middleware.getStudents());
         this.app.get('/student/:id', middleware.getStudent());

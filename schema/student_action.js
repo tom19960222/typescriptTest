@@ -37,25 +37,24 @@ class StudentAction {
             return null;
         return new StudentItem(row[0]);
     }
-    async postStudent(req) {
-        const data = new StudentInput(req.body);
-        const id = await this.db('student').insert(data).returning('student_id');
+    async postStudent(input) {
+        const id = await this.db('student').insert(input).returning('student_id');
         const row = await this.db('student').select().where('student_id', id[0]);
         return new StudentItem(row[0]);
     }
-    async patchStudent(req) {
-        const data = await this.db('student').select().where('student_id', req.params.id);
+    async patchStudent(stu, student_id) {
+        const data = await this.db('student').select().where('student_id', student_id);
         console.log(data);
         if (data.length === 0)
             return null;
         const input = {
-            name: req.body.name || data[0].name,
-            birthday: req.body.birthday || data[0].birthday,
-            department: req.body.department || data[0].department,
-            level: req.body.level || data[0].level,
+            name: stu.name || data[0].name,
+            birthday: stu.birthday || data[0].birthday,
+            department: stu.department || data[0].department,
+            level: stu.level || data[0].level,
         };
-        await this.db('student').update(input).where('student_id', req.params.id);
-        const result = await this.db('student').where('student_id', req.params.id);
+        await this.db('student').update(input).where('student_id', student_id);
+        const result = await this.db('student').where('student_id', student_id);
         return new StudentItem(result[0]);
     }
     async deleteStudent(Sid) {
