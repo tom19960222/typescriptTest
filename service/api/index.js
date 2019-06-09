@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const middleware_1 = require("./middleware");
-const actionStudent_1 = require("./actionStudent");
-const actionTendency_1 = require("./actionTendency");
+const actionStudent_1 = require("../../Schema/actionStudent");
+const actionTendency_1 = require("../../Schema/actionTendency");
 class service {
     constructor(app, db) {
         this.app = app;

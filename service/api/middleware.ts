@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import { StudentAction, StudentItem, StudentInput } from './actionStudent'
-import { TendencyAction, TendencyItem } from './actionTendency'
+import { StudentAction } from '../../Schema/actionStudent'
+import { TendencyAction } from '../../Schema/actionTendency'
 import { Response, Request } from 'express';
 
 export class Middleware{

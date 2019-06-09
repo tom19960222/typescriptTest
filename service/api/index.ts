@@ -1,6 +1,6 @@
 import { Middleware } from './middleware';
-import { StudentAction } from './actionStudent';
-import { TendencyAction } from './actionTendency';
+import { StudentAction } from '../../Schema/actionStudent';
+import { TendencyAction } from '../../Schema/actionTendency';
 
 export class service {
   public app;
