@@ -1,8 +1,8 @@
 import Knex from 'knex';
 import _ from 'lodash';
-import { Request } from 'express';
+// 沒用到的 import 要記得刪掉
 
-export class TendencyItem{
+export class TendencyItem {
   public tendency_id: number;
   public category: String;
   public category_num: number;
@@ -16,7 +16,7 @@ export class TendencyItem{
   }
 }
 
-export class TendencyInput{
+export class TendencyInput {
   public category: String;
   public category_num: number;
   public student_id: number;
@@ -28,7 +28,7 @@ export class TendencyInput{
   }
 }
 
-export class TendencyAction{
+export class TendencyAction {
   public db: Knex;
 
   constructor(db: Knex) {
@@ -40,32 +40,46 @@ export class TendencyAction{
     return row.map(r => new TendencyItem(r));
   }
 
-  async getTendency(tendency_id: number) {
-    const row = await this.db('tendency').select().where('tendency_id', tendency_id);
-    if (row.length === 0) return null;
-    return new TendencyItem(row[0]);
+  // 這裡一樣變數名稱要統一，不要混用 `tendency_id`, `id`, `TId` 之類類似的命名
+  async getTendency(tendencyId: number) {
+    const tendency = await this.db('tendency')
+      .where('tendency_id', tendencyId)
+      .first();
+    if (!tendency) return null;
+    return new TendencyItem(tendency);
   }
 
   async postTendency(input: TendencyInput) {
-    const id = await this.db('tendency').insert(input).returning('tendency_id');
-    const row = await this.db('tendency').select().where('tendency_id', id[0]);
-    return new TendencyItem(row[0]);
+    const insertResult = await this.db('tendency')
+      .insert(input)
+      .returning('tendency_id');
+    const tendency = await this.db('tendency')
+      .where('tendency_id', insertResult[0])
+      .first();
+    return new TendencyItem(tendency);
   }
 
-  async patchTendency(ten: TendencyInput, id: number) {
-    const data = await this.db('tendency').select().where('tendency_id', id);
-    const input = {
-      category: ten.category || data[0].category,
-      category_num: ten.category_num || data[0].category_num,
-      student_id: ten.student_id || data[0].student_id,
-    }
-    await this.db('tendency').update(input).where('tendency_id', id);
-    const row = await this.db('tendency').select().where('tendency_id', id);
-    return new TendencyItem(row[0]);
+  async patchTendency(input: TendencyInput, tendencyId: number) {
+    const data = await this.db('tendency')
+      .where('tendency_id', tendencyId)
+      .first();
+    const dataToUpdate = {
+      category: input.category || data.category,
+      category_num: input.category_num || data.category_num,
+      student_id: input.student_id || data.student_id,
+    };
+    await this.db('tendency')
+      .update(dataToUpdate)
+      .where('tendency_id', tendencyId);
+    const tendency = await this.db('tendency')
+      .where('tendency_id', tendencyId)
+      .first();
+    return new TendencyItem(tendency);
   }
 
-  async deleteTendency(TId: number) {
-    return await this.db('tendency').del().where('tendency_id', TId);
+  async deleteTendency(tendencyId: number) {
+    return await this.db('tendency')
+      .del()
+      .where('tendency_id', tendencyId);
   }
-
 }
